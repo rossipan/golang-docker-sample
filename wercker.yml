@@ -14,6 +14,7 @@ build:
     - script: 
         name: Test the container
         code: |
+            curl -s myTestContainer:8080/hello;
             if curlOutput=`curl -s myTestContainer:8080/hello`; then 
                 if [ "$curlOutput" == "Hello xrex, you've requested: /hello" ]; then
                     echo "Test passed: container gave expected response"
