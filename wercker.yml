@@ -1,5 +1,5 @@
 build:
-  box: google/golang
+  box: docker
   steps:
     # Test the project
     - script:
