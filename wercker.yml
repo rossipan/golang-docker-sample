@@ -1,0 +1,37 @@
+build:
+  box: google/golang
+  steps:
+    # Test the project
+    - script:
+        name: Unit tests
+        code: go test ./backend/...     
+    - internal/docker-build: 
+        dockerfile: /res/docker/Dockerfile 
+        image-name: golang-docker-sample # name used to refer to this image until it's pushed   
+    - internal/docker-run:
+        image: golang-docker-sample
+        name: myTestContainer     
+    - script: 
+        name: Test the container
+        code: |
+            if curlOutput=`curl -s myTestContainer:8080/hello`; then 
+                if [ "$curlOutput" == "Hello xrex, you've requested: /hello" ]; then
+                    echo "Test passed: container gave expected response"
+                else
+                    echo "Test failed: container gave unexpected response: " $curlOutput
+                    exit 1
+                fi   
+            else 
+                echo "Test failed: container did not respond"
+                exit 1
+            fi        
+    - internal/docker-kill:
+        name: myTestContainer               
+    - internal/docker-push: 
+        image-name: golang-docker-sample
+        aws-access-key: $AWS_ACCESS_KEY_ID
+        aws-secret-key: $AWS_SECRET_ACCESS_KEY
+        aws-region: ap-northeast-1
+        aws-registry-id: $AWS_REGISTRY_ID
+        repository: workflows-demo
+        tag: debug-$WERCKER_BRANCH_NAME
