@@ -4,7 +4,7 @@ build:
     # Test the project
     - script:
         name: Unit tests
-        code: go test ./backend/...     
+        code: echo "go test ./backend/..."
     - internal/docker-build: 
         dockerfile: /res/docker/Dockerfile 
         image-name: golang-docker-sample # name used to refer to this image until it's pushed   
